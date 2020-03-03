@@ -1,10 +1,10 @@
 import React, { memo } from 'react';
-import { View, Text } from 'react-native';
-import Image from 'react-native-scalable-image';
+import { View, Text, Image } from 'react-native';
+//import Image from 'react-native-scalable-image';
 
 import { TouchableOpacity } from '../../../common/TouchableOpacity';
 
-import { width } from '../../../../utils/dimensions';
+import { width, height } from '../../../../utils/dimensions';
 import { getImageApi } from '../../../../utils/images';
 import { convertToUpperCaseFirstLetter } from '../../../../utils/letters';
 import { convertToYear } from '../../../../utils/dates';
@@ -55,9 +55,13 @@ const MovieRow = memo(
             <Image
               //source={getImageApi(item.poster_path)}
               source={{ uri: item.image_url }}
-              style={styles.photo}
-              width={width * 0.3}
+              style={{
+                width: width * 0.3,
+                height: height * 0.2,
+                borderRadius: 8
+              }}
             />
+
             <View style={styles.item}>
               <View>
                 <Text numberOfLines={2} style={styles.textTitle}>
@@ -94,11 +98,20 @@ const MovieRow = memo(
           }
         >
           <View>
-            <Image
+            {/* <Image
               //source={getImageApi(item.poster_path)}
               source={{ uri: item.image_url }}
               style={styles.photo}
               width={width * 0.33}
+            /> */}
+            <Image
+              //source={getImageApi(item.poster_path)}
+              source={{ uri: item.image_url }}
+              style={{
+                width: width * 0.3,
+                height: height * 0.2,
+                borderRadius: 8
+              }}
             />
           </View>
           <Text numberOfLines={2} style={styles.textTwoTitle}>

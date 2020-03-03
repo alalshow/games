@@ -23,6 +23,11 @@ gameSchema.statics.create = function(payload) {
   return game.save();
 };
 
+// Create new game document
+gameSchema.statics.createMany = function(array) {
+  return this.insertMany(array);
+};
+
 // Find All
 gameSchema.statics.findAll = function() {
   return this.find({});

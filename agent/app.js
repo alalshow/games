@@ -5,15 +5,16 @@ dotenv.config();
 import express from 'express';
 import mongoose from 'mongoose';
 import bodyParser from 'body-parser';
-import crawling from './crawling';
+import getGameList from './crawl/list';
 import gameModel from './models/game';
+import googleTranslate from './translate/google-translate';
 
 const log = console.log;
 const app = express();
 const gameUniqueKey = 'id';
 const page = {
   start: 1,
-  last: 10,
+  last: 2,
 };
 let totalGamesCount = 0;
 
@@ -22,40 +23,61 @@ const logTatalCount = gameCount => {
   log('inserted game count: ', totalGamesCount);
 };
 
-//insertMany 예제
-// db.inventory.insertMany([
-//   { item: 'journal', qty: 25, tags: ['blank', 'red'], dim_cm: [14, 21] },
-//   { item: 'notebook', qty: 50, tags: ['red', 'blank'], dim_cm: [14, 21] },
-//   {
-//     item: 'paper',
-//     qty: 100,
-//     tags: ['red', 'blank', 'plain'],
-//     dim_cm: [14, 21],
-//   },
-//   { item: 'planner', qty: 75, tags: ['blank', 'red'], dim_cm: [22.85, 30] },
-//   { item: 'postcard', qty: 45, tags: ['blue'], dim_cm: [10, 15.25] },
-// ]);
-
 const getPriceStr = str => {
   const arr = str.split(' ');
   return arr[arr.length - 1];
 };
 
-const insertGames = (pageNum, games) => {
-  if (Array.isArray(games)) {
-    games.forEach((game, idx) => {
-      game[gameUniqueKey] = `${pageNum}_${idx}`;
-      game.price = getPriceStr(game.price);
-      gameModel.create(game);
-    });
-    logTatalCount(games.length);
+/* 병렬 처리가 필요하다면 나중에 사용
+const getTitles = async games => {
+  try {
+    if (Array.isArray(games)) {
+      const promises = games.map(game => googleTranslate(game.title));
+      const titles = await Promise.all(promises);
+      log(titles);
+    }
+  } catch (e) {
+    log(e);
   }
+  return games;
+};
+*/
+const setGamesData = async (pageNum, games) => {
+  console.log(pageNum);
+  try {
+    if (Array.isArray(games)) {
+      for (let idx = 0; idx <= games.length - 1; idx++) {
+        let game = games[idx];
+        game.title = await googleTranslate(game.title);
+        game.summary = await googleTranslate(game.summary);
+        game[gameUniqueKey] = `${pageNum}_${idx}`;
+        game.price = getPriceStr(game.price);
+      }
+    }
+  } catch (e) {
+    log(e);
+  }
+  return games;
+};
+
+const insertGames = games => {
+  gameModel.createMany(games);
+  logTatalCount(games.length);
 };
 
 const crawl = async (start, last) => {
-  for (let i = start; i <= last; i++) {
-    await crawling(i).then(games => insertGames(i, games));
+  let games = [];
+  try {
+    for (let i = start; i <= last; i++) {
+      games = await getGameList(i);
+      games = await setGamesData(i, games);
+      insertGames(games);
+    }
+    log(games[0]);
+  } catch (e) {
+    log(e);
   }
+  return games;
 };
 
 const start = async () => {
@@ -81,4 +103,8 @@ const start = async () => {
   }
 };
 
+const st = async () => {
+  const test = await googleTranslate('hello');
+  log(test);
+};
 start();

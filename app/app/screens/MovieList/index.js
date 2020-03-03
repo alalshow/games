@@ -60,7 +60,7 @@ const MovieList = ({ navigation }) => {
   }, []);
 
   request2 = async (url, content = {}, debug = false) => {
-    const data3 = await fetch('http://192.168.42.63:4500/games')
+    const data3 = await fetch('https://eshop-switch.herokuapp.com/games')
       .then(response => response.json())
       .catch(error => {
         console.error(error);
@@ -75,15 +75,15 @@ const MovieList = ({ navigation }) => {
       const { filterType } = filter;
       const dateRelease = getTodayDate();
 
-      const data_origin = await request(`${typeRequest}/movie`, {
-        page,
-        'release_date.lte': dateRelease,
-        sort_by: filterType,
-        with_release_type: '1|2|3|4|5|6|7',
-        include_adult: hasAdultContent,
-        ...getQueryRequest()
-      });
-      console.log('data data_origin', data_origin.results[0]);
+      // const data_origin = await request(`${typeRequest}/movie`, {
+      //   page,
+      //   'release_date.lte': dateRelease,
+      //   sort_by: filterType,
+      //   with_release_type: '1|2|3|4|5|6|7',
+      //   include_adult: hasAdultContent,
+      //   ...getQueryRequest()
+      // });
+      // console.log('data data_origin', data_origin.results[0]);
 
       const data = await request2();
       console.log('data', data[0]);
@@ -125,22 +125,22 @@ const MovieList = ({ navigation }) => {
   );
 
   renderFooter = () => {
-    if (isLoadingMore) return <Spinner size="small" />;
+    // if (isLoadingMore) return <Spinner size="small" />;
 
-    if (totalPages !== page && results.length > 0) {
-      return (
-        <View style={styles.loadingMore}>
-          <TouchableOpacity
-            style={styles.loadingButton}
-            onPress={handleLoadMore}
-          >
-            <Text style={styles.loadingText}>Load more</Text>
-          </TouchableOpacity>
-        </View>
-      );
-    }
+    // if (totalPages !== page && results.length > 0) {
+    //   return (
+    //     <View style={styles.loadingMore}>
+    //       <TouchableOpacity
+    //         style={styles.loadingButton}
+    //         onPress={handleLoadMore}
+    //       >
+    //         <Text style={styles.loadingText}>Load more</Text>
+    //       </TouchableOpacity>
+    //     </View>
+    //   );
+    // }
 
-    if (results.length > 0) return <View style={styles.loadingMore} />;
+    // if (results.length > 0) return <View style={styles.loadingMore} />;
 
     return null;
   };
