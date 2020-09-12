@@ -11,6 +11,6 @@
   "dependencies": {
     "babel-node": "0.0.1-security",
     "nintendo-switch-eshop": "3.0.1",
-    "node-fetch": "2.6.0"
+    "node-fetch": "2.6.1"
   }
 }
